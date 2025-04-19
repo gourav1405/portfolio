@@ -1,11 +1,8 @@
 import React from "react";
+import Home from "./components/Home";
 
 const App = () => {
-  return (
-    <div className="text-3xl font-bold underline text-red-500">
-      Hello world!
-    </div>
-  );
+  return <Home />;
 };
 
 export default App;

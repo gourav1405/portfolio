@@ -1,0 +1,277 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background-color: #edeae6;
+  color: #1f1f1f;
+  overflow-x: hidden;
+}
+.homepage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 40px;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  background-color: #edeae6;
+  top: 0;
+}
+.logo {
+  transform: scale(1.5);
+}
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+}
+.nav-links li {
+  cursor: pointer;
+  font-size: 14px;
+  transition: color 0.3s;
+}
+.nav-links li:hover {
+  color: #555;
+}
+.contact-button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #1f1f1f;
+  color: white;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.menu-toggle {
+  display: none;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: #1f1f1f;
+}
+.mobile-menu {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.main-content {
+  text-align: center;
+  padding: 2rem 20px;
+  flex: 1;
+  margin-top: 60px;
+  overflow: hidden;
+}
+
+.main-content h1 {
+  font-size: 36px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 30px;
+}
+
+.primary-button {
+  background-color: #b7cbc2;
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.primary-button:hover {
+  background-color: #9bb2a9;
+}
+
+.illustration {
+  margin-top: 60px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.illustration img {
+  width: 100%;
+  height: auto;
+  transform: scale(1.5);
+}
+
+.about-section,
+.skills-section,
+.links-section {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.about-section h2,
+.skills-section h2,
+.links-section h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.skills-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.skills-section li {
+  font-size: 16px;
+  margin: 10px 0;
+}
+
+.social-links a {
+  text-decoration: none;
+  color: #1f1f1f;
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+.social-links a:hover {
+  color: #555;
+}
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 12px;
+  color: #666;
+}
+@media (max-width: 768px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+    .menu-toggle {
+    display: block;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .illustration {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end
+    margin-top: 20px;
+  }
+
+  .profile-image {
+    margin-top: 15rem;
+  }
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    background-color: #edeae6;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 200px;
+    padding: 10px 0;
+    border-radius: 0 0 8px 8px;
+    box-shadow: -2px 2px 10px rgba(0, 0, 0, 0.2);
+  }
+  .nav-links.active {
+    display: flex;
+  }
+  .nav-links li {
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .nav-links li:last-child {
+    border-bottom: none;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .main-content {
+    padding: 80px 20px 60px 20px;
+  }
+
+  .main-content h1 {
+    font-size: 28px;
+  }
+  
+  .mobile-contact {
+    color: #1f1f1f;
+    font-weight: bold;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .illustration {
+    max-width: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 60px 20px 60px 20px;
+  }
+
+  .main-content h1 {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+}
+.footer-overlay {
+  padding: 20px 40px;
+  background: transparent;
+  backdrop-filter: blur(30px);
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer-content {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-text {
+  font-size: 12px;
+  color: #444;
+}
+
+.footer-icons a {
+  margin-left: 12px;
+  color: #333;
+  font-size: 18px;
+  transition: color 0.3s;
+}
+.footer-icons a:hover {
+  color: #000;
+}
