@@ -1,80 +1,141 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../styles/home.css";
-import logoSVG from "../../src/assets/logo.png";
 import myPic from "../../src/assets/myPic1.png";
-
+import { useNavigate } from "react-router-dom";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 export default function HomePage() {
+  const navLinksRef = useRef([]);
+  navLinksRef.current = [];
+  const nameRef = useRef(null);
+  const roleRef = useRef(null);
+  const resumeBtnRef = useRef(null);
+  const imageRef = useRef(null);
+  const footerLeftRef = useRef(null);
+  const footerRightRef = useRef(null);
   const [isMenuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen(!isMenuOpen);
+
+  const navigate = useNavigate();
+  const lastScrollTimeRef = useRef(0);
+  const scrollCooldown = 1000;
+  const scrollThreshold = 50;
+
+  useEffect(() => {
+    const tl = gsap.timeline({
+      defaults: { ease: "power2.out", duration: 1 },
+    });
+    tl.from(nameRef.current, { opacity: 0, y: 30 }, "-=0.2")
+      .from(roleRef.current, { opacity: 0, y: 20 }, "-=0.7")
+      .from(resumeBtnRef.current, { opacity: 0, y: 20 }, "-=0.6")
+      .from(imageRef.current, { scale: 0.8, opacity: 0, duration: 1.2 }, "-=1")
+      .from(footerLeftRef.current, { opacity: 0, x: -30 }, "-=1")
+      .from(footerRightRef.current, { opacity: 0, x: 30 }, "-=1");
+
+    ScrollTrigger.create({
+      trigger: ".homepage",
+      start: "top top",
+      end: "bottom top",
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const aboutContainer = document.querySelector(".about-container");
+        if (aboutContainer) {
+          const maxScrollLeft =
+            aboutContainer.scrollWidth - aboutContainer.clientWidth;
+          aboutContainer.scrollLeft = progress * maxScrollLeft;
+        }
+      },
+    });
+    const handleWheel = (e) => {
+      const now = Date.now();
+      if (now - lastScrollTimeRef.current < scrollCooldown) {
+        return;
+      }
+      if (e.deltaY > scrollThreshold) {
+        gsap.to(".homepage", {
+          opacity: 0,
+          duration: 0.4,
+          onComplete: () => {
+            navigate("/about");
+          },
+        });
+        lastScrollTimeRef.current = now;
+      } else if (e.deltaY < -scrollThreshold) {
+        lastScrollTimeRef.current = now;
+      }
+    };
+    const homepageEl = document.querySelector(".homepage");
+    if (homepageEl) {
+      homepageEl.addEventListener("wheel", handleWheel);
+    }
+    return () => {
+      if (homepageEl) {
+        homepageEl.removeEventListener("wheel", handleWheel);
+      }
+    };
+  }, [navigate]);
   return (
-    <div className="homepage">
-      <nav className="navbar">
-        <div className="logo">
-          <img src={logoSVG} alt="M Gourav Logo" width="60" height="40" />
-        </div>
-        <div className="mobile-menu">
-          <button className="menu-toggle" onClick={toggleMenu}>
-            ☰
-          </button>
-        </div>
-        <ul className={`nav-links ${isMenuOpen ? "active" : ""}`}>
-          <li>Home</li>
-          <li>About</li>
-          <li>Experience</li>
-          <li>Skills</li>
-          <li className="mobile-contact">Contact</li>
-        </ul>
-        <button className="contact-button desktop-only">Contact</button>
-      </nav>
-      <main className="main-content">
-        <h1>M Gourav</h1>
-        <p className="subtitle">Full Stack Developer | Web Enthusiast</p>
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <a
-            href="https://drive.google.com/file/d/1K5yVJZZEJWqIIQXCg3lVwwyuwtNTGED5/view"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="primary-button"
+    <>
+      <div className="homepage">
+        <main className="main-content">
+          <h1 ref={nameRef}>M Gourav</h1>
+          <p className="subtitle" ref={roleRef}>
+            Front End Developer | Web Enthusiast
+          </p>
+          <div
+            style={{ display: "flex", gap: "10px", justifyContent: "center" }}
           >
-            View Resume
-          </a>
-        </div>
-        <div className="illustration">
-          <img
-            src={myPic}
-            alt="M Gourav illustration"
-            className="profile-image"
-          />
-        </div>
-      </main>
-      <div className="footer-overlay">
-        <div className="footer-content">
-          <span className="footer-text">© M Gourav</span>
-          <div className="footer-icons">
             <a
-              href="https://github.com/gourav0514"
+              ref={resumeBtnRef}
+              href="https://drive.google.com/file/d/1K5yVJZZEJWqIIQXCg3lVwwyuwtNTGED5/view"
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
+              className="primary-button"
             >
-              <i className="fab fa-github"></i>
+              View Resume
             </a>
-            <a
-              href="https://x.com/gouravsai63"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/munikotigourav0514/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <i className="fab fa-linkedin-in"></i>
-            </a>
+          </div>
+          <div className="illustration">
+            <img
+              src={myPic}
+              alt="M Gourav illustration"
+              className="profile-image"
+              ref={imageRef}
+            />
+          </div>
+        </main>
+        <div className="footer-overlay">
+          <div className="footer-content">
+            <span className="footer-text" ref={footerLeftRef}>
+              © M Gourav
+            </span>
+            <div className="footer-icons" ref={footerRightRef}>
+              <a
+                href="https://github.com/gourav0514"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="fab fa-github"></i>
+              </a>
+              <a
+                href="https://x.com/gouravsai63"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="fab fa-twitter"></i>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/munikotigourav0514/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <i className="fab fa-linkedin-in"></i>
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
