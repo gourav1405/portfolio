@@ -65,13 +65,56 @@ export default function HomePage() {
         lastScrollTimeRef.current = now;
       }
     };
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      if (Math.max(absX, absY) < 50) return;
+      if (absY > absX && deltaY < 0) {
+        navigateToAbout();
+      } else if (absX > absY && deltaX < 0) {
+        navigateToAbout();
+      }
+    };
+
+    const navigateToAbout = () => {
+      const now = Date.now();
+      if (now - lastScrollTimeRef.current < scrollCooldown) return;
+
+      gsap.to(".homepage", {
+        opacity: 0,
+        duration: 0.4,
+        onComplete: () => {
+          navigate("/about");
+        },
+      });
+      lastScrollTimeRef.current = now;
+    };
     const homepageEl = document.querySelector(".homepage");
     if (homepageEl) {
       homepageEl.addEventListener("wheel", handleWheel);
+      homepageEl.addEventListener("touchstart", handleTouchStart);
+      homepageEl.addEventListener("touchend", handleTouchEnd);
     }
     return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       if (homepageEl) {
         homepageEl.removeEventListener("wheel", handleWheel);
+        homepageEl.removeEventListener("touchstart", handleTouchStart);
+        homepageEl.removeEventListener("touchend", handleTouchEnd);
       }
     };
   }, [navigate]);
@@ -96,15 +139,15 @@ export default function HomePage() {
               View Resume
             </a>
           </div>
-          <div className="illustration">
-            <img
-              src={myPic}
-              alt="M Gourav illustration"
-              className="profile-image"
-              ref={imageRef}
-            />
-          </div>
         </main>
+        <div className="illustration">
+          <img
+            src={myPic}
+            alt="M Gourav illustration"
+            className="profile-image"
+            ref={imageRef}
+          />
+        </div>
         <div className="footer-overlay">
           <div className="footer-content">
             <span className="footer-text" ref={footerLeftRef}>
