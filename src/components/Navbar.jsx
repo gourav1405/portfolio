@@ -56,6 +56,9 @@ const Navbar = ({ isMenuOpen, toggleMenu, onAnimationComplete }) => {
             <NavLink
               to={link.to}
               end={link.exact}
+              onClick={() => {
+                if (isMenuOpen) toggleMenu();
+              }}
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               {link.label}
