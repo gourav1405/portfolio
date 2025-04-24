@@ -8,7 +8,9 @@ import ExperiencePage from "./components/Experience";
 const App = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [navbarReady, setNavbarReady] = useState(false);
-  const toggleMenu = () => setMenuOpen(!isMenuOpen);
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
   const handleNavbarAnimationComplete = () => {
     setNavbarReady(true);
   };

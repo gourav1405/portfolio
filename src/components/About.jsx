@@ -62,37 +62,57 @@ const AboutPage = () => {
         },
       });
     }
+    const handleNavigate = (path) => {
+      gsap.to(".about-wrapper", {
+        opacity: 0,
+        duration: 0.4,
+        onComplete: () => {
+          navigate(path);
+        },
+      });
+      lastScrollTimeRef.current = Date.now();
+    };
     const handleWheel = (e) => {
       const now = Date.now();
       if (now - lastScrollTimeRef.current < scrollCooldown) return;
-      if (e.deltaY > scrollThreshold) {
-        gsap.to(".about-wrapper", {
-          opacity: 0,
-          duration: 0.4,
-          onComplete: () => {
-            navigate("/experience");
-          },
-        });
-        lastScrollTimeRef.current = now;
+      if (e.deltaY > scrollThreshold || e.deltaX > scrollThreshold) {
+        handleNavigate("/experience");
+      } else if (e.deltaY < -scrollThreshold || e.deltaX < -scrollThreshold) {
+        handleNavigate("/");
       }
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        if (e.deltaX > scrollThreshold) {
-          gsap.to(".about-wrapper", {
-            opacity: 0,
-            duration: 0.4,
-            onComplete: () => {
-              navigate("/experience");
-            },
-          });
-          lastScrollTimeRef.current = now;
-        } else if (e.deltaX < -scrollThreshold) {
-          navigate("/");
-          lastScrollTimeRef.current = now;
+    };
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    };
+    const handleTouchEnd = (e) => {
+      const now = Date.now();
+      if (now - lastScrollTimeRef.current < scrollCooldown) return;
+
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
+
+      if (Math.max(absX, absY) < 50) return;
+
+      if (absY > absX) {
+        if (deltaY < 0) {
+          handleNavigate("/experience");
+        } else {
+          handleNavigate("/");
         }
       } else {
-        if (e.deltaY < -scrollThreshold) {
-          navigate("/");
-          lastScrollTimeRef.current = now;
+        if (deltaX < 0) {
+          handleNavigate("/experience");
+        } else {
+          handleNavigate("/");
         }
       }
     };
@@ -100,14 +120,20 @@ const AboutPage = () => {
     const aboutEl = aboutWrapperRef.current;
     if (aboutEl) {
       aboutEl.addEventListener("wheel", handleWheel);
+      aboutEl.addEventListener("touchstart", handleTouchStart);
+      aboutEl.addEventListener("touchend", handleTouchEnd);
     }
 
     return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       if (aboutEl) {
         aboutEl.removeEventListener("wheel", handleWheel);
+        aboutEl.removeEventListener("touchstart", handleTouchStart);
+        aboutEl.removeEventListener("touchend", handleTouchEnd);
       }
     };
   }, [navigate]);
+
   return (
     <div className="about-wrapper" ref={aboutWrapperRef}>
       <div className="about-container">
