@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useNavigate } from "react-router-dom";
@@ -23,7 +23,7 @@ const experiences = [
         <br />• Built seamless navigation using <strong>Expo Router</strong>.
         <br />
         <br />
-        <span style={{ fontSize: "0.9rem", color: "#999" }}>
+        <span className="tech">
           <strong>Tech Stack:</strong> React Native, TypeScript, React Hook
           Form, Axios, Context API, Expo Router
         </span>
@@ -48,7 +48,7 @@ const experiences = [
         </strong> & <strong>App Store</strong>.
         <br />
         <br />
-        <span style={{ fontSize: "0.9rem", color: "#999" }}>
+        <span className="tech">
           <strong>Tech Stack:</strong> Ionic 7, Cordova, Angular, NgRx,
           TypeScript
         </span>
@@ -74,7 +74,7 @@ const experiences = [
         • Enhanced system accountability through advanced approval processes.
         <br />
         <br />
-        <span style={{ fontSize: "0.9rem", color: "#999" }}>
+        <span className="tech">
           <strong>Tech Stack:</strong> Angular 14, TypeScript, HTML, CSS
         </span>
       </>
@@ -84,70 +84,71 @@ const experiences = [
 
 const ExperiencePage = () => {
   const containerRef = useRef();
-  const hasNavigatedRef = useRef(false);
   const navigate = useNavigate();
+  const hasNavigatedRef = useRef(false);
+  useEffect(() => {
+    gsap.from(".exp-card", {
+      opacity: 0,
+      y: 50,
+      duration: 1,
+      stagger: 0.2,
+      ease: "power3.out",
+    });
+  }, []);
 
   useEffect(() => {
     const container = containerRef.current;
     const slides = gsap.utils.toArray(".exp-slide");
+    const totalScrollHeight = window.innerHeight * (slides.length - 1);
+    document.body.style.height = `${totalScrollHeight}px`;
 
     let ctx = gsap.context(() => {
-      gsap.fromTo(
-        containerRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 2, ease: "power2.out" }
-      );
-      gsap.from(".experience-track", {
-        opacity: 0,
-        x: 100,
-        duration: 1,
-        ease: "power3.out",
-      });
-      gsap.to(slides, {
+      gsap.to(".experience-track", {
         xPercent: -100 * (slides.length - 1),
         ease: "none",
         scrollTrigger: {
-          trigger: container,
-          pin: true,
+          trigger: ".pin-wrap",
+          start: "top top",
+          end: `+=${totalScrollHeight}`,
           scrub: 1,
-          snap: 1 / (slides.length - 1),
-          end: () => `+=${window.innerWidth * slides.length}`,
+          pin: true,
+          anticipatePin: 1,
           onUpdate: (self) => {
             const progress = self.progress;
             const direction = self.direction;
-
             if (progress < 0.02 && direction < 0 && !hasNavigatedRef.current) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              navigate("/about");
+              requestAnimationFrame(() => navigate("/about"));
             } else if (
-              progress > 0.98 &&
+              progress > 0.45 &&
               direction > 0 &&
               !hasNavigatedRef.current
             ) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              navigate("/skills");
+              requestAnimationFrame(() => navigate("/skills"));
             } else if (progress > 0.05 && progress < 0.95) {
               hasNavigatedRef.current = false;
             }
           },
         },
       });
+
       slides.forEach((slide) => {
         gsap.fromTo(
           slide.querySelector(".exp-card"),
-          { opacity: 0, y: 30 },
+          { opacity: 0, y: 40, scale: 0.9 },
           {
             opacity: 1,
             y: 0,
+            scale: 1,
             duration: 0.6,
             ease: "power2.out",
             scrollTrigger: {
               trigger: slide,
-              start: "top 80%", // Trigger when the top of the slide is 80% into the viewport
-              end: "bottom top", // End when the bottom of the slide reaches the top of the viewport
-              toggleActions: "play none none reverse", // Play animation when scrolling to this slide, and reverse when scrolling away
+              start: "top 80%",
+              toggleActions: "play none none reverse",
             },
           }
         );
@@ -158,30 +159,34 @@ const ExperiencePage = () => {
         {
           opacity: 1,
           y: 0,
+          duration: 1.2,
           delay: 0.6,
-          duration: 1,
           ease: "power2.out",
         }
       );
     }, containerRef);
-
-    return () => ctx.revert();
+    return () => {
+      ctx.revert();
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      gsap.killTweensOf("*");
+      document.body.style.height = "";
+    };
   }, [navigate]);
 
   return (
     <div className="experience-wrapper" ref={containerRef}>
-      <div className="experience-track">
-        {experiences.map((exp, index) => (
-          <div className="exp-slide" key={index}>
-            <div className="exp-card">
-              <h3>{exp.title}</h3>
-              <p>{exp.description}</p>
+      <div className="pin-wrap">
+        <div className="experience-track">
+          {experiences.map((exp, index) => (
+            <div className="exp-slide" key={index}>
+              <div className="exp-card">
+                <h3>{exp.title}</h3>
+                <p>{exp.description}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
-      <div className="scroll-hint" id="scroll-hint">
-        Scroll to explore
+          ))}
+        </div>
+        <div className="scroll-hint">Scroll to explore</div>
       </div>
     </div>
   );

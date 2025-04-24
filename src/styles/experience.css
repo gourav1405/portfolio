@@ -2,67 +2,48 @@
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
-  position: relative;
-  background-color: #edeae6;
+  background: #edeae6;
   font-family: "Inter", sans-serif;
-}
-
-.experience-track {
   display: flex;
-  width: max-content;
-  position: relative;
-}
-
-.exp-slide {
-  min-width: 100vw;
-  height: 100vh;
-  display: flex;
-  align-items: center;
   justify-content: center;
   position: relative;
 }
 
+.pin-wrap {
+  height: 100vh;
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.experience-track {
+  display: flex;
+  width: 300vw;
+}
+
+.exp-slide {
+  flex: 0 0 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
 .exp-card {
   background: #fff;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 40px 30px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.05);
-  text-align: center;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.06);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 70%;
+  max-width: 900px;
+  text-align: center;
 }
 
 .exp-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.08);
-}
-
-.scroll-hint {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 1rem;
-  color: #666;
-  letter-spacing: 2px;
-  background-color: rgba(255, 255, 255, 0.6);
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-weight: 500;
-  pointer-events: none;
-  z-index: 10;
-  animation: floatUpDown 2.5s ease-in-out infinite;
-}
-
-@keyframes floatUpDown {
-  0% {
-    transform: translateX(-50%) translateY(0);
-  }
-  50% {
-    transform: translateX(-50%) translateY(-10px);
-  }
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 50px rgba(0, 0, 0, 0.1);
 }
 
 .exp-card h3 {
@@ -77,32 +58,90 @@
   line-height: 1.6;
 }
 
-.floating-label {
+.tech {
+  font-size: 0.9rem;
+  color: #999;
+  display: block;
+  margin-top: 10px;
+}
+
+.scroll-hint {
   position: absolute;
-  top: 15%;
-  font-size: 1.2rem;
-  background: rgba(0, 0, 0, 0.05);
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  background: rgba(255, 255, 255, 0.6);
   padding: 6px 12px;
-  border-radius: 6px;
-  backdrop-filter: blur(4px);
-  color: #333;
+  border-radius: 8px;
+  font-weight: 500;
+  color: #555;
+  pointer-events: none;
+  animation: floatUpDown 2.5s ease-in-out infinite;
 }
 
-.timeline-track {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 4px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  z-index: 1;
+@keyframes floatUpDown {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+@media screen and (max-width: 768px) {
+  .exp-card {
+    padding: 25px 20px;
+    width: 85%;
+  }
+
+  .exp-card h3 {
+    font-size: 1.5rem;
+  }
+
+  .exp-card p {
+    font-size: 0.95rem;
+  }
+
+  .scroll-hint {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+  }
 }
 
-.timeline-line {
-  height: 100%;
-  width: 100%;
-  background-color: #1f1f1f;
-  transform-origin: left;
-  transform: scaleX(0);
+@media screen and (max-width: 480px) {
+  .exp-card {
+    width: 95%;
+    padding: 20px 15px;
+  }
+
+  .exp-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .exp-card p {
+    font-size: 0.85rem;
+  }
+
+  .scroll-hint {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .exp-card h3 {
+    font-size: 1.2rem;
+  }
+
+  .exp-card p {
+    font-size: 0.8rem;
+  }
+
+  .scroll-hint {
+    font-size: 0.7rem;
+    padding: 4px 6px;
+  }
 }
