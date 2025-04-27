@@ -1,0 +1,29 @@
+.contact-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #edeae6;
+  text-align: center;
+  padding: 2rem;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+.contact-heading {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.contact-item {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  color: #555;
+}
+
+.contact-item strong {
+  margin-right: 0.5rem;
+  color: #111;
+}
