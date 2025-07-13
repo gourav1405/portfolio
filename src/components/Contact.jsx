@@ -11,26 +11,26 @@ const ContactPage = () => {
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".contact-heading", {
+      gsap.from(".contact-wrapper", {
+        y: 80,
         opacity: 0,
-        y: -30,
-        duration: 1,
-        ease: "power2.out",
+        duration: 1.2,
+        ease: "power4.out"
       });
 
-      gsap.from(".contact-item", {
+      gsap.from([".contact-heading", ".contact-item"], {
         opacity: 0,
-        y: 20,
-        duration: 0.8,
-        stagger: 0.3,
-        delay: 0.5,
-        ease: "power2.out",
+        y: 40,
+        duration: 0.9,
+        stagger: 0.25,
+        delay: 0.3,
+        ease: "power2.out"
       });
     }, contactRef);
 
     const timeout = setTimeout(() => {
       setAllowNavigation(true);
-    }, 1500);
+    }, 1600);
 
     return () => {
       ctx.revert();
@@ -42,35 +42,25 @@ const ContactPage = () => {
     if (!allowNavigation) return;
 
     const handleWheel = (e) => {
-      if (!isNavigatingRef.current) {
+      if (!isNavigatingRef.current && e.deltaY < 0) {
         isNavigatingRef.current = true;
-        if (e.deltaY < 0 || e.deltaX < 0) {
-          navigate("/skills");
-        } else if (e.deltaY > 0 || e.deltaX > 0) {
-          navigate("/skills");
-        }
+        navigate("/skills");
       }
     };
 
-    let touchStartX = 0;
     let touchStartY = 0;
 
     const handleTouchStart = (e) => {
-      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     };
 
     const handleTouchMove = (e) => {
-      if (!isNavigatingRef.current) {
-        const touchEndX = e.touches[0].clientX;
-        const touchEndY = e.touches[0].clientY;
-        const diffX = touchEndX - touchStartX;
-        const diffY = touchEndY - touchStartY;
+      const touchEndY = e.touches[0].clientY;
+      const diffY = touchEndY - touchStartY;
 
-        if (Math.abs(diffX) > 50 || Math.abs(diffY) > 50) {
-          isNavigatingRef.current = true;
-          navigate("/skills");
-        }
+      if (diffY > 50 && !isNavigatingRef.current) {
+        isNavigatingRef.current = true;
+        navigate("/skills");
       }
     };
 
