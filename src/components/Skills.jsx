@@ -25,7 +25,7 @@ const skills = [
   { name: "Data Analysis", icon: reactNativeIcon },
   { name: "Graphic Design", icon: reactIcon },
   { name: "Motion Graphics", icon: reduxIcon },
-  { name: "Git Versioning", icon: gitIcon },
+  { name: "Git Versioning", icon: gitIcon }
 ];
 
 const Skills = () => {
@@ -45,6 +45,18 @@ const Skills = () => {
     }px`;
 
     let ctx = gsap.context(() => {
+      // In animation
+      gsap.fromTo(
+        ".skills-wrapper",
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out"
+        }
+      );
+
       gsap.to(".skills-horizontal", {
         x: () => `-${scrollDistance}px`,
         ease: "none",
@@ -63,7 +75,14 @@ const Skills = () => {
             if (progress < 0.02 && direction < 0 && !hasNavigatedRef.current) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              requestAnimationFrame(() => navigate("/experience"));
+              gsap.to(".skills-wrapper", {
+                x: "-100%",
+                rotation: -8,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.inOut",
+                onComplete: () => navigate("/experience")
+              });
             } else if (
               progress >= 1 &&
               direction > 0 &&
@@ -71,12 +90,18 @@ const Skills = () => {
             ) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              requestAnimationFrame(() => navigate("/contact"));
+              gsap.to(".skills-wrapper", {
+                x: "100%",
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onComplete: () => navigate("/contact")
+              });
             } else if (progress > 0.05 && progress < 0.95) {
               hasNavigatedRef.current = false;
             }
-          },
-        },
+          }
+        }
       });
 
       gsap.fromTo(
@@ -92,8 +117,8 @@ const Skills = () => {
           scrollTrigger: {
             trigger: ".skills-horizontal",
             start: "top 80%",
-            toggleActions: "play none none reverse",
-          },
+            toggleActions: "play none none reverse"
+          }
         }
       );
 
@@ -108,8 +133,8 @@ const Skills = () => {
           scrollTrigger: {
             trigger: ".skills-title",
             start: "top 80%",
-            toggleActions: "play none none none",
-          },
+            toggleActions: "play none none none"
+          }
         }
       );
     }, containerRef);
@@ -130,7 +155,6 @@ const Skills = () => {
           {skills.map((skill, index) => (
             <div key={index} className="skill-card">
               <img src={skill.icon} alt={skill.name} className="skill-icon" />
-              {/* <p className="skill-name">{skill.name}</p> */}
             </div>
           ))}
         </div>
