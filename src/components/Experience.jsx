@@ -28,7 +28,7 @@ const experiences = [
           Form, Axios, Context API, Expo Router
         </span>
       </>
-    ),
+    )
   },
   {
     title: "CAR-DEALER MOBILE",
@@ -53,7 +53,7 @@ const experiences = [
           TypeScript
         </span>
       </>
-    ),
+    )
   },
   {
     title: "ICUST WEB PLATFORM",
@@ -78,31 +78,21 @@ const experiences = [
           <strong>Tech Stack:</strong> Angular 14, TypeScript, HTML, CSS
         </span>
       </>
-    ),
-  },
+    )
+  }
 ];
 
 const ExperiencePage = () => {
-  const containerRef = useRef();
+  const containerRef = useRef(null);
   const navigate = useNavigate();
   const hasNavigatedRef = useRef(false);
-  useEffect(() => {
-    gsap.from(".exp-card", {
-      opacity: 0,
-      y: 50,
-      duration: 1,
-      stagger: 0.2,
-      ease: "power3.out",
-    });
-  }, []);
 
   useEffect(() => {
-    const container = containerRef.current;
     const slides = gsap.utils.toArray(".exp-slide");
     const totalScrollHeight = window.innerHeight * (slides.length - 1);
     document.body.style.height = `${totalScrollHeight}px`;
 
-    let ctx = gsap.context(() => {
+    const ctx = gsap.context(() => {
       gsap.to(".experience-track", {
         xPercent: -100 * (slides.length - 1),
         ease: "none",
@@ -114,27 +104,43 @@ const ExperiencePage = () => {
           pin: true,
           anticipatePin: 1,
           onUpdate: (self) => {
-            const progress = self.progress;
-            const direction = self.direction;
-            if (progress < 0.02 && direction < 0 && !hasNavigatedRef.current) {
+            const { progress, direction } = self;
+            const nearStart = progress < 0.05;
+            const nearEnd = progress > 0.45;
+
+            if (nearStart && direction < 0 && !hasNavigatedRef.current) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              requestAnimationFrame(() => navigate("/about"));
-            } else if (
-              progress > 0.45 &&
-              direction > 0 &&
-              !hasNavigatedRef.current
-            ) {
+              gsap.to(".experience-wrapper", {
+                y: "100%",
+                opacity: 0,
+                duration: 0.7,
+                ease: "power2.in",
+                onComplete: () => navigate("/about")
+              });
+            }
+
+            if (nearEnd && direction > 0 && !hasNavigatedRef.current) {
               hasNavigatedRef.current = true;
               ScrollTrigger.getAll().forEach((t) => t.kill());
-              requestAnimationFrame(() => navigate("/skills"));
-            } else if (progress > 0.05 && progress < 0.95) {
+              gsap.to(".experience-wrapper", {
+                x: "-100%",
+                rotation: -10,
+                opacity: 0,
+                duration: 0.8,
+                ease: "power3.inOut",
+                onComplete: () => navigate("/skills")
+              });
+            }
+
+            if (!nearStart && !nearEnd) {
               hasNavigatedRef.current = false;
             }
-          },
-        },
+          }
+        }
       });
 
+      // Animate cards on scroll
       slides.forEach((slide) => {
         gsap.fromTo(
           slide.querySelector(".exp-card"),
@@ -148,8 +154,8 @@ const ExperiencePage = () => {
             scrollTrigger: {
               trigger: slide,
               start: "top 80%",
-              toggleActions: "play none none reverse",
-            },
+              toggleActions: "play none none reverse"
+            }
           }
         );
       });
@@ -161,13 +167,14 @@ const ExperiencePage = () => {
           y: 0,
           duration: 1.2,
           delay: 0.6,
-          ease: "power2.out",
+          ease: "power2.out"
         }
       );
     }, containerRef);
+
     return () => {
       ctx.revert();
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      ScrollTrigger.getAll().forEach((t) => t.kill());
       gsap.killTweensOf("*");
       document.body.style.height = "";
     };
@@ -177,8 +184,8 @@ const ExperiencePage = () => {
     <div className="experience-wrapper" ref={containerRef}>
       <div className="pin-wrap">
         <div className="experience-track">
-          {experiences.map((exp, index) => (
-            <div className="exp-slide" key={index}>
+          {experiences.map((exp, i) => (
+            <div className="exp-slide" key={i}>
               <div className="exp-card">
                 <h3>{exp.title}</h3>
                 <p>{exp.description}</p>
