@@ -1,11 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import myPic from "../../src/assets/myPic1.png";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useNavigate } from "react-router-dom";
 import "../styles/about.css";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const AboutPage = () => {
   const aboutWrapperRef = useRef(null);
@@ -15,31 +12,34 @@ const AboutPage = () => {
   const navigate = useNavigate();
 
   const lastScrollTimeRef = useRef(0);
-  const scrollCooldown = 1200;
-  const scrollThreshold = 30;
+  const isNavigatingRef = useRef(false);
+  const wheelDeltaRef = useRef(0);
+  const canNavigateRef = useRef(false);
+  const scrollCooldown = 1000;
+  const scrollThreshold = 140;
 
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
 
   useEffect(() => {
+    canNavigateRef.current = false;
     const tl = gsap.timeline({ defaults: { ease: "power2.out", duration: 1 } });
     tl.fromTo(aboutWrapperRef.current, { opacity: 0 }, { opacity: 1 })
       .from(imageRef.current, { opacity: 0, x: -80 }, "-=0.6")
       .from(textRef.current, { opacity: 0, x: 80 }, "-=0.6");
 
-    if (scrollIndicatorRef.current) {
-      ScrollTrigger.create({
-        trigger: aboutWrapperRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
-        onUpdate: (self) => {
-          scrollIndicatorRef.current.style.width = `${self.progress * 100}%`;
-        }
-      });
-    }
+    const navigationTimer = window.setTimeout(() => {
+      canNavigateRef.current = true;
+    }, 700);
 
     const handleNavigate = (path) => {
+      if (isNavigatingRef.current) return;
+
+      isNavigatingRef.current = true;
+      if (scrollIndicatorRef.current) {
+        scrollIndicatorRef.current.style.width =
+          path === "/experience" ? "100%" : "0%";
+      }
       gsap.to(aboutWrapperRef.current, {
         opacity: 0,
         y: -50,
@@ -53,13 +53,22 @@ const AboutPage = () => {
     };
 
     const handleWheel = (e) => {
+      if (!canNavigateRef.current) return;
+
       const now = Date.now();
       if (now - lastScrollTimeRef.current < scrollCooldown) return;
 
-      if (e.deltaY > scrollThreshold || e.deltaX > scrollThreshold) {
+      wheelDeltaRef.current +=
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+
+      if (wheelDeltaRef.current > scrollThreshold) {
+        wheelDeltaRef.current = 0;
         handleNavigate("/experience");
-      } else if (e.deltaY < -scrollThreshold || e.deltaX < -scrollThreshold) {
+      } else if (wheelDeltaRef.current < -scrollThreshold) {
+        wheelDeltaRef.current = 0;
         handleNavigate("/");
+      } else if (Math.abs(e.deltaY) < 4 && Math.abs(e.deltaX) < 4) {
+        wheelDeltaRef.current = 0;
       }
     };
 
@@ -69,6 +78,8 @@ const AboutPage = () => {
     };
 
     const handleTouchEnd = (e) => {
+      if (!canNavigateRef.current) return;
+
       const now = Date.now();
       if (now - lastScrollTimeRef.current < scrollCooldown) return;
 
@@ -96,7 +107,7 @@ const AboutPage = () => {
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      window.clearTimeout(navigationTimer);
       if (aboutEl) {
         aboutEl.removeEventListener("wheel", handleWheel);
         aboutEl.removeEventListener("touchstart", handleTouchStart);
@@ -114,22 +125,32 @@ const AboutPage = () => {
           </div>
           <div className="about-text" ref={textRef}>
             <p>
-              My tech journey started at Silicon, where I graduated with a focus
-              on development. As a front-end developer skilled in HTML, CSS, and
-              JavaScript, I bring extensive experience with React Native, Ionic,
-              React, Angular and frameworks to craft dynamic, responsive web and
-              mobile applications.
+              I build products, not just interfaces. With 3+ years of experience
+              as a Software Engineer, I specialize in crafting scalable,
+              high-performance web and mobile applications using technologies
+              like React Native, React, Angular, Node Js and modern JavaScript
+              frameworks.
             </p>
+
             <p>
-              I’m driven to continuously grow my skills in modern web
-              technologies, with a goal to expand into full-stack development
-              soon. I’m excited to contribute to impactful projects, write
-              efficient code, and collaborate with teams that prioritize
-              innovation.
+              At Rumango, I’ve worked on real-world applications in banking and
+              automotive domains—designing complex UI flows, integrating APIs,
+              and delivering seamless user experiences. I enjoy solving problems
+              that involve performance, scalability, and clean architecture.
             </p>
+
             <p>
-              Outside of tech, I’m an anime lover, inspired by its creativity
-              and storytelling.
+              Recently, I developed a real-time multiplayer chess platform using
+              WebSockets, enabling live gameplay, matchmaking, and seamless
+              reconnections—combining system design with interactive user
+              experience.
+            </p>
+
+            <p>
+              I’m continuously evolving as a developer, currently expanding into
+              full-stack development with a growing focus on backend systems and
+              system design. Outside of tech, I find inspiration in anime, drawn
+              to its creativity and storytelling.
             </p>
             <div className="scroll-indicator" ref={scrollIndicatorRef}></div>
           </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import Home from "./components/Home";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AboutPage from "./components/About";
@@ -10,12 +10,12 @@ import ContactPage from "./components/Contact";
 const App = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
   const [navbarReady, setNavbarReady] = useState(false);
-  const toggleMenu = () => {
+  const toggleMenu = useCallback(() => {
     setMenuOpen((prev) => !prev);
-  };
-  const handleNavbarAnimationComplete = () => {
+  }, []);
+  const handleNavbarAnimationComplete = useCallback(() => {
     setNavbarReady(true);
-  };
+  }, []);
   return (
     <Router>
       <Navbar
