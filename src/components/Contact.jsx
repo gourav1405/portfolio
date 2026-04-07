@@ -7,18 +7,19 @@ const ContactPage = () => {
   const contactRef = useRef();
   const navigate = useNavigate();
   const isNavigatingRef = useRef(false);
+  const wheelDeltaRef = useRef(0);
   const [allowNavigation, setAllowNavigation] = useState(false);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(".contact-wrapper", {
+      gsap.from(".contact-shell", {
         y: 80,
         opacity: 0,
         duration: 1.2,
         ease: "power4.out"
       });
 
-      gsap.from([".contact-heading", ".contact-item"], {
+      gsap.from([".contact-heading", ".contact-intro", ".contact-panel"], {
         opacity: 0,
         y: 40,
         duration: 0.9,
@@ -42,9 +43,15 @@ const ContactPage = () => {
     if (!allowNavigation) return;
 
     const handleWheel = (e) => {
-      if (!isNavigatingRef.current && e.deltaY < 0) {
+      if (isNavigatingRef.current || !allowNavigation) return;
+
+      wheelDeltaRef.current += e.deltaY;
+
+      if (wheelDeltaRef.current < -140) {
         isNavigatingRef.current = true;
         navigate("/skills");
+      } else if (Math.abs(e.deltaY) < 4) {
+        wheelDeltaRef.current = 0;
       }
     };
 
@@ -55,6 +62,8 @@ const ContactPage = () => {
     };
 
     const handleTouchMove = (e) => {
+      if (!allowNavigation) return;
+
       const touchEndY = e.touches[0].clientY;
       const diffY = touchEndY - touchStartY;
 
@@ -77,15 +86,96 @@ const ContactPage = () => {
 
   return (
     <div className="contact-wrapper" ref={contactRef}>
-      <h2 className="contact-heading">CONTACT</h2>
-      <div className="contact-item">
-        <strong>EMAIL:</strong> gouravsai63@gmail.com
+      <div className="contact-shell">
+        <div className="contact-copy">
+          <span className="contact-kicker">Contact</span>
+          <h2 className="contact-heading">
+            Let’s build something people remember.
+          </h2>
+          <p className="contact-intro">
+            I enjoy building polished front-end experiences, product interfaces,
+            and responsive flows that feel clean, modern, and reliable. If your
+            team is looking for a developer who cares about both logic and look,
+            let’s connect.
+          </p>
+
+          <div className="contact-cta-row">
+            <a
+              className="contact-cta primary-contact-cta"
+              href="mailto:gouravsai63@gmail.com"
+            >
+              Email Me
+            </a>
+            <a className="contact-cta" href="tel:+918217211105">
+              Call Me
+            </a>
+          </div>
+        </div>
+
+        <div className="contact-panels">
+          <div className="contact-panel">
+            <span className="contact-label">Email</span>
+            <a href="mailto:gouravsai63@gmail.com" className="contact-value">
+              gouravsai63@gmail.com
+            </a>
+          </div>
+
+          <div className="contact-panel">
+            <span className="contact-label">Phone</span>
+            <a href="tel:+918217211105" className="contact-value">
+              +91 821-721-1105
+            </a>
+          </div>
+
+          <div className="contact-panel">
+            <span className="contact-label">Location</span>
+            <span className="contact-value">Bengaluru, Karnataka</span>
+          </div>
+
+          <div className="contact-panel">
+            <span className="contact-label">Profiles</span>
+            <div className="contact-links">
+              <a
+                href="https://github.com/gourav1405"
+                target="_blank"
+                rel="noreferrer"
+              >
+                GitHub
+              </a>
+              <a
+                href="https://www.linkedin.com/in/munikotigourav0514/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                LinkedIn
+              </a>
+              <a
+                href="https://x.com/gouravsai63"
+                target="_blank"
+                rel="noreferrer"
+              >
+                X
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="contact-item">
-        <strong>PHONE:</strong> +91 821-721-1105
-      </div>
-      <div className="contact-item">
-        <strong>LOCATION:</strong> Bengaluru, Karnataka
+
+      <div className="nav-beacon contact-beacon" aria-hidden="true">
+        <div className="nav-beacon-direction nav-beacon-direction-up">
+          <span />
+          <span />
+          <span />
+        </div>
+        <div className="nav-beacon-core">
+          <span className="nav-beacon-ring nav-beacon-ring-one" />
+          <span className="nav-beacon-ring nav-beacon-ring-two" />
+          <span className="nav-beacon-dot" />
+        </div>
+        <div className="nav-beacon-copy">
+          <span className="nav-beacon-label">Return Path</span>
+          <strong>Scroll up to move back to Skills</strong>
+        </div>
       </div>
     </div>
   );

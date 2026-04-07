@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import logoSVG from "../assets/logo.png";
 import { gsap } from "gsap";
 
@@ -7,6 +7,7 @@ const Navbar = ({ isMenuOpen, toggleMenu, onAnimationComplete }) => {
   const logoRef = useRef(null);
   const navLinksRef = useRef([]);
   const contactRef = useRef(null);
+  const navigate = useNavigate();
   navLinksRef.current = [];
 
   useEffect(() => {
@@ -26,7 +27,7 @@ const Navbar = ({ isMenuOpen, toggleMenu, onAnimationComplete }) => {
         duration: 0.8,
       })
       .from(contactRef.current, { y: -30, opacity: 0 }, "-=0.5");
-  }, []);
+  }, [onAnimationComplete]);
 
   const links = [
     { to: "/", label: "Home", exact: true },
@@ -66,7 +67,11 @@ const Navbar = ({ isMenuOpen, toggleMenu, onAnimationComplete }) => {
           </li>
         ))}
       </ul>
-      <button className="contact-button desktop-only" ref={contactRef}>
+      <button
+        className="contact-button desktop-only"
+        ref={contactRef}
+        onClick={() => navigate("/contact")}
+      >
         Contact
       </button>
     </nav>
