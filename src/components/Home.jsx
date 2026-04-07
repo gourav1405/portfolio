@@ -1,11 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import "../styles/home.css";
 import myPic from "../../src/assets/myPic1.png";
 import { useNavigate } from "react-router-dom";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function HomePage() {
   const nameRef = useRef(null);
@@ -17,16 +14,17 @@ export default function HomePage() {
 
   const navigate = useNavigate();
 
-  const SCROLL_THRESHOLD = 30;
+  const SCROLL_THRESHOLD = 140;
   const SCROLL_COOLDOWN = 1200;
   const TRANSITION_DURATION = 0.8;
   const SWIPE_MIN_DISTANCE = 50;
 
   const scrollingRef = useRef(false);
+  const wheelDeltaRef = useRef(0);
   const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
 
-  const triggerNavigate = () => {
+  const triggerNavigate = useCallback(() => {
     if (scrollingRef.current) return;
 
     scrollingRef.current = true;
@@ -41,7 +39,7 @@ export default function HomePage() {
         }, SCROLL_COOLDOWN);
       }
     });
-  };
+  }, [navigate]);
 
   useEffect(() => {
     const tl = gsap.timeline({
@@ -55,25 +53,18 @@ export default function HomePage() {
       .from(footerLeftRef.current, { opacity: 0, x: -30 }, "-=1")
       .from(footerRightRef.current, { opacity: 0, x: 30 }, "-=1");
 
-    ScrollTrigger.create({
-      trigger: ".homepage",
-      start: "top top",
-      end: "bottom top",
-      onUpdate: (self) => {
-        const aboutContainer = document.querySelector(".about-container");
-        if (aboutContainer) {
-          const maxScrollLeft =
-            aboutContainer.scrollWidth - aboutContainer.clientWidth;
-          aboutContainer.scrollLeft = self.progress * maxScrollLeft;
-        }
-      }
-    });
-
     const homepageEl = document.querySelector(".homepage");
 
     const handleWheel = (e) => {
-      if (e.deltaY > SCROLL_THRESHOLD) {
+      if (scrollingRef.current) return;
+
+      wheelDeltaRef.current += e.deltaY;
+
+      if (wheelDeltaRef.current > SCROLL_THRESHOLD) {
+        wheelDeltaRef.current = 0;
         triggerNavigate();
+      } else if (Math.abs(e.deltaY) < 4) {
+        wheelDeltaRef.current = 0;
       }
     };
 
@@ -106,43 +97,62 @@ export default function HomePage() {
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
       if (homepageEl) {
         homepageEl.removeEventListener("wheel", handleWheel);
         homepageEl.removeEventListener("touchstart", handleTouchStart);
         homepageEl.removeEventListener("touchend", handleTouchEnd);
       }
     };
-  }, [navigate]);
+  }, [triggerNavigate]);
 
-  // ✅ JSX
   return (
     <div className="homepage">
-      <main className="main-content">
-        <h1 ref={nameRef}>M Gourav</h1>
-        <p className="subtitle" ref={roleRef}>
-          Front End Developer | Web Enthusiast
-        </p>
-        <div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
-          <a
-            ref={resumeBtnRef}
-            href="https://drive.google.com/file/d/1odEyyMHq96wv0tZI9s5XerLtzhEroG2V/view"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="primary-button"
+      <div className="home-stage">
+        <main className="main-content">
+          <h1 ref={nameRef}>M Gourav</h1>
+          <p className="subtitle" ref={roleRef}>
+            Front End Developer | Web Enthusiast
+          </p>
+          <div
+            style={{ display: "flex", gap: "10px", justifyContent: "center" }}
           >
-            View Resume
-          </a>
-        </div>
-      </main>
+            <a
+              ref={resumeBtnRef}
+              href="https://drive.google.com/file/d/1Sxg29rWYmb2rS573WLTdnKLXoN0dV_KM/view?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="primary-button"
+            >
+              View Resume
+            </a>
+          </div>
+        </main>
 
-      <div className="illustration">
-        <img
-          src={myPic}
-          alt="M Gourav illustration"
-          className="profile-image"
-          ref={imageRef}
-        />
+        <div className="nav-beacon home-beacon" aria-hidden="true">
+          <div className="nav-beacon-core">
+            <span className="nav-beacon-ring nav-beacon-ring-one" />
+            <span className="nav-beacon-ring nav-beacon-ring-two" />
+            <span className="nav-beacon-dot" />
+          </div>
+          <div className="nav-beacon-copy">
+            <span className="nav-beacon-label">Enter</span>
+            <strong>Scroll to begin the journey</strong>
+          </div>
+          <div className="nav-beacon-direction nav-beacon-direction-down">
+            <span />
+            <span />
+            <span />
+          </div>
+        </div>
+
+        <div className="illustration">
+          <img
+            src={myPic}
+            alt="M Gourav illustration"
+            className="profile-image"
+            ref={imageRef}
+          />
+        </div>
       </div>
 
       <div className="footer-overlay">
