@@ -8,6 +8,7 @@ export default function HomePage() {
   const nameRef = useRef(null);
   const roleRef = useRef(null);
   const resumeBtnRef = useRef(null);
+  const beaconRef = useRef(null);
   const imageRef = useRef(null);
   const footerLeftRef = useRef(null);
   const footerRightRef = useRef(null);
@@ -49,6 +50,7 @@ export default function HomePage() {
     tl.from(nameRef.current, { opacity: 0, y: 30 }, "-=0.2")
       .from(roleRef.current, { opacity: 0, y: 20 }, "-=0.7")
       .from(resumeBtnRef.current, { opacity: 0, y: 20 }, "-=0.6")
+      .from(beaconRef.current, { opacity: 0, y: 18, scale: 0.95 }, "-=0.45")
       .from(imageRef.current, { scale: 0.8, opacity: 0, duration: 1.2 }, "-=1")
       .from(footerLeftRef.current, { opacity: 0, x: -30 }, "-=1")
       .from(footerRightRef.current, { opacity: 0, x: 30 }, "-=1");
@@ -109,7 +111,7 @@ export default function HomePage() {
     <div className="homepage">
       <div className="home-stage">
         <main className="main-content">
-          <h1 ref={nameRef}>M Gourav</h1>
+          <h1 ref={nameRef}>Munikoti Gourav</h1>
           <p className="subtitle" ref={roleRef}>
             Front End Developer | Web Enthusiast
           </p>
@@ -128,7 +130,11 @@ export default function HomePage() {
           </div>
         </main>
 
-        <div className="nav-beacon home-beacon" aria-hidden="true">
+        <div
+          className="nav-beacon home-beacon"
+          aria-hidden="true"
+          ref={beaconRef}
+        >
           <div className="nav-beacon-core">
             <span className="nav-beacon-ring nav-beacon-ring-one" />
             <span className="nav-beacon-ring nav-beacon-ring-two" />
@@ -151,6 +157,8 @@ export default function HomePage() {
             alt="M Gourav illustration"
             className="profile-image"
             ref={imageRef}
+            loading="eager"
+            decoding="async"
           />
         </div>
       </div>

@@ -90,6 +90,7 @@ const Skills = () => {
   const navigate = useNavigate();
   const isNavigatingRef = useRef(false);
   const wheelDeltaRef = useRef(0);
+  const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
   const canNavigateRef = useRef(false);
 
@@ -179,6 +180,7 @@ const Skills = () => {
     };
 
     const handleTouchStart = (event) => {
+      touchStartXRef.current = event.touches[0].clientX;
       touchStartYRef.current = event.touches[0].clientY;
     };
 
@@ -186,17 +188,27 @@ const Skills = () => {
       if (!canNavigateRef.current) return;
       if (isNavigatingRef.current) return;
 
+      const touchEndX = event.changedTouches[0].clientX;
       const touchEndY = event.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartXRef.current;
       const deltaY = touchEndY - touchStartYRef.current;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
       const nearTop = container.scrollTop <= 8;
       const nearBottom =
         container.scrollTop + container.clientHeight >=
         container.scrollHeight - 8;
 
-      if (nearTop && deltaY > 60) {
-        navigateTo("/experience");
-      } else if (nearBottom && deltaY < -60) {
-        navigateTo("/contact");
+      if (Math.max(absX, absY) < 50) return;
+
+      if (nearTop) {
+        if ((absY >= absX && deltaY > 60) || (absX > absY && deltaX > 60)) {
+          navigateTo("/experience");
+        }
+      } else if (nearBottom) {
+        if ((absY >= absX && deltaY < -60) || (absX > absY && deltaX < -60)) {
+          navigateTo("/contact");
+        }
       }
     };
 
@@ -231,7 +243,13 @@ const Skills = () => {
         <div className="skills-grid">
           {skills.map((skill, index) => (
             <div key={index} className="skill-card">
-              <img src={skill.icon} alt={skill.name} className="skill-icon" />
+              <img
+                src={skill.icon}
+                alt={skill.name}
+                className="skill-icon"
+                loading="lazy"
+                decoding="async"
+              />
               <h3 className="skill-name">{skill.name}</h3>
               <p className="skill-description">{skill.description}</p>
             </div>

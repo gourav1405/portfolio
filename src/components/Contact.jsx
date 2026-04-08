@@ -55,19 +55,28 @@ const ContactPage = () => {
       }
     };
 
+    let touchStartX = 0;
     let touchStartY = 0;
 
     const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
     };
 
-    const handleTouchMove = (e) => {
+    const handleTouchEnd = (e) => {
       if (!allowNavigation) return;
+      if (isNavigatingRef.current) return;
 
-      const touchEndY = e.touches[0].clientY;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const diffX = touchEndX - touchStartX;
       const diffY = touchEndY - touchStartY;
+      const absX = Math.abs(diffX);
+      const absY = Math.abs(diffY);
 
-      if (diffY > 50 && !isNavigatingRef.current) {
+      if (Math.max(absX, absY) < 60) return;
+
+      if ((absY >= absX && diffY > 60) || (absX > absY && diffX > 60)) {
         isNavigatingRef.current = true;
         navigate("/skills");
       }
@@ -75,12 +84,12 @@ const ContactPage = () => {
 
     window.addEventListener("wheel", handleWheel, { passive: true });
     window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener("wheel", handleWheel);
       window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
   }, [allowNavigation, navigate]);
 

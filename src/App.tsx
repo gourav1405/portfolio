@@ -9,13 +9,10 @@ import ContactPage from "./components/Contact";
 
 const App = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [navbarReady, setNavbarReady] = useState(false);
   const toggleMenu = useCallback(() => {
     setMenuOpen((prev) => !prev);
   }, []);
-  const handleNavbarAnimationComplete = useCallback(() => {
-    setNavbarReady(true);
-  }, []);
+  const handleNavbarAnimationComplete = useCallback(() => {}, []);
   return (
     <Router>
       <Navbar
@@ -24,7 +21,7 @@ const App = () => {
         onAnimationComplete={handleNavbarAnimationComplete}
       />
       <Routes>
-        <Route path="/" element={navbarReady ? <Home /> : null} />
+        <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/experience" element={<ExperiencePage />} />
         <Route path="/skills" element={<Skills />} />

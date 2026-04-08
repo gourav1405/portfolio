@@ -78,6 +78,7 @@ const ExperiencePage = () => {
   const navigate = useNavigate();
   const isNavigatingRef = useRef(false);
   const wheelDeltaRef = useRef(0);
+  const touchStartXRef = useRef(0);
   const touchStartYRef = useRef(0);
   const canNavigateRef = useRef(false);
 
@@ -158,6 +159,7 @@ const ExperiencePage = () => {
     };
 
     const handleTouchStart = (event) => {
+      touchStartXRef.current = event.touches[0].clientX;
       touchStartYRef.current = event.touches[0].clientY;
     };
 
@@ -165,17 +167,27 @@ const ExperiencePage = () => {
       if (!canNavigateRef.current) return;
       if (isNavigatingRef.current) return;
 
+      const touchEndX = event.changedTouches[0].clientX;
       const touchEndY = event.changedTouches[0].clientY;
+      const deltaX = touchEndX - touchStartXRef.current;
       const deltaY = touchEndY - touchStartYRef.current;
+      const absX = Math.abs(deltaX);
+      const absY = Math.abs(deltaY);
       const nearTop = container.scrollTop <= 8;
       const nearBottom =
         container.scrollTop + container.clientHeight >=
         container.scrollHeight - 8;
 
-      if (nearTop && deltaY > 60) {
-        navigateTo("/about");
-      } else if (nearBottom && deltaY < -60) {
-        navigateTo("/skills");
+      if (Math.max(absX, absY) < 50) return;
+
+      if (nearTop) {
+        if ((absY >= absX && deltaY > 60) || (absX > absY && deltaX > 60)) {
+          navigateTo("/about");
+        }
+      } else if (nearBottom) {
+        if ((absY >= absX && deltaY < -60) || (absX > absY && deltaX < -60)) {
+          navigateTo("/skills");
+        }
       }
     };
 
