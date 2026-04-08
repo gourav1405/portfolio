@@ -63,6 +63,7 @@
 .experience-lane {
   border-radius: 28px;
   padding: 28px;
+  padding-bottom: 46px;
   position: relative;
   overflow: hidden;
 }
@@ -388,6 +389,7 @@
 
   .experience-lane {
     padding: 18px;
+    padding-bottom: 46px;
   }
 
   .lane-header h3 {
@@ -409,6 +411,7 @@
 @media screen and (max-width: 480px) {
   .lane-card {
     padding: 18px;
+    padding-bottom: 46px;
   }
 
   .nav-beacon {
