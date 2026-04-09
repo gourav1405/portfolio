@@ -170,7 +170,7 @@ export default function HomePage() {
           </span>
           <div className="footer-icons" ref={footerRightRef}>
             <a
-              href="https://github.com/gourav0514"
+              href="https://github.com/gourav1405"
               target="_blank"
               rel="noreferrer"
             >
