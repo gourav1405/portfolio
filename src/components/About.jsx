@@ -6,6 +6,7 @@ import "../styles/about.css";
 
 const AboutPage = () => {
   const aboutWrapperRef = useRef(null);
+  const aboutContainerRef = useRef(null);
   const scrollIndicatorRef = useRef(null);
   const imageRef = useRef(null);
   const textRef = useRef(null);
@@ -22,6 +23,7 @@ const AboutPage = () => {
   const touchStartYRef = useRef(0);
 
   useEffect(() => {
+    const container = aboutContainerRef.current;
     canNavigateRef.current = false;
     const tl = gsap.timeline({ defaults: { ease: "power2.out", duration: 1 } });
     tl.fromTo(aboutWrapperRef.current, { opacity: 0 }, { opacity: 1 })
@@ -53,13 +55,30 @@ const AboutPage = () => {
     };
 
     const handleWheel = (e) => {
+      if (!container) return;
       if (!canNavigateRef.current) return;
 
       const now = Date.now();
       if (now - lastScrollTimeRef.current < scrollCooldown) return;
 
-      wheelDeltaRef.current +=
+      const primaryDelta =
         Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      const nearTop = container.scrollTop <= 8;
+      const nearBottom =
+        container.scrollTop + container.clientHeight >=
+        container.scrollHeight - 8;
+
+      if (primaryDelta > 0 && !nearBottom) {
+        wheelDeltaRef.current = 0;
+        return;
+      }
+
+      if (primaryDelta < 0 && !nearTop) {
+        wheelDeltaRef.current = 0;
+        return;
+      }
+
+      wheelDeltaRef.current += primaryDelta;
 
       if (wheelDeltaRef.current > scrollThreshold) {
         wheelDeltaRef.current = 0;
@@ -78,6 +97,7 @@ const AboutPage = () => {
     };
 
     const handleTouchEnd = (e) => {
+      if (!container) return;
       if (!canNavigateRef.current) return;
 
       const now = Date.now();
@@ -90,16 +110,28 @@ const AboutPage = () => {
 
       const absX = Math.abs(deltaX);
       const absY = Math.abs(deltaY);
+      const nearTop = container.scrollTop <= 8;
+      const nearBottom =
+        container.scrollTop + container.clientHeight >=
+        container.scrollHeight - 8;
       if (Math.max(absX, absY) < 50) return;
 
       if (absY > absX) {
-        deltaY < 0 ? handleNavigate("/experience") : handleNavigate("/");
+        if (deltaY < 0 && nearBottom) {
+          handleNavigate("/experience");
+        } else if (deltaY > 0 && nearTop) {
+          handleNavigate("/");
+        }
       } else {
-        deltaX < 0 ? handleNavigate("/experience") : handleNavigate("/");
+        if (deltaX < 0 && nearBottom) {
+          handleNavigate("/experience");
+        } else if (deltaX > 0 && nearTop) {
+          handleNavigate("/");
+        }
       }
     };
 
-    const aboutEl = aboutWrapperRef.current;
+    const aboutEl = aboutContainerRef.current;
     if (aboutEl) {
       aboutEl.addEventListener("wheel", handleWheel);
       aboutEl.addEventListener("touchstart", handleTouchStart);
@@ -118,7 +150,7 @@ const AboutPage = () => {
 
   return (
     <div className="about-wrapper" ref={aboutWrapperRef}>
-      <div className="about-container">
+      <div className="about-container" ref={aboutContainerRef}>
         <div className="about-section">
           <div className="about-image" ref={imageRef}>
             <img src={myPic} alt="About Me" />
