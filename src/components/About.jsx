@@ -63,10 +63,10 @@ const AboutPage = () => {
 
       const primaryDelta =
         Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-      const nearTop = container.scrollTop <= 8;
+      const nearTop = container.scrollTop <= 20;
       const nearBottom =
-        container.scrollTop + container.clientHeight >=
-        container.scrollHeight - 8;
+        container.scrollHeight - container.scrollTop - container.clientHeight <=
+        20;
 
       if (primaryDelta > 0 && !nearBottom) {
         wheelDeltaRef.current = 0;
@@ -114,7 +114,7 @@ const AboutPage = () => {
       const nearBottom =
         container.scrollTop + container.clientHeight >=
         container.scrollHeight - 8;
-      if (Math.max(absX, absY) < 50) return;
+      if (Math.max(absX, absY) < 60) return;
 
       if (absY > absX) {
         if (deltaY < 0 && nearBottom) {

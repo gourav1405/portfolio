@@ -132,7 +132,7 @@
 
   .about-container {
     min-height: calc(100dvh - 82px);
-    height: auto;
+    max-height: calc(100dvh - 82px);
     overflow-x: hidden;
     overflow-y: auto;
   }
