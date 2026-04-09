@@ -247,7 +247,7 @@ const Skills = () => {
                 src={skill.icon}
                 alt={skill.name}
                 className="skill-icon"
-                loading="lazy"
+                loading="eager"
                 decoding="async"
               />
               <h3 className="skill-name">{skill.name}</h3>
