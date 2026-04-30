@@ -120,7 +120,7 @@ export default function HomePage() {
           >
             <a
               ref={resumeBtnRef}
-              href="https://drive.google.com/file/d/1Sxg29rWYmb2rS573WLTdnKLXoN0dV_KM/view?usp=sharing"
+              href="https://drive.google.com/file/d/1mmDHPmeBzGchokyIg8OczVcl32a1s6U_/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="primary-button"
